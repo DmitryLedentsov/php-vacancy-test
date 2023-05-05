@@ -41,7 +41,7 @@ $image = $html->find('img[class="j-verlok-lazy loaded"]',0)->attr["src"];
 //доп задание: получаем ссылку
 $link = "https://us.shein.com/pdsearch/".$id;
 $crawler = $client->request('GET', $link);
-
+//на данном этапе у нас ссылка не на товар а на список товаров с нужным id, нужно тыкнуть на первый
 $link  = $client->waitFor('a[class="S-product-item__img-container j-expose__product-item-img"]');
 $link =  str_get_html($link->html())->find('a[class="S-product-item__img-container j-expose__product-item-img"]',0)->attr['href'];
 $link = "https://us.shein.com/".$link;
