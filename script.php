@@ -16,6 +16,8 @@ $html = str_get_html($root->html());
 $info = $html->find('div[class="product-intro__info"]',0);
 
 $name = $info->find("h1.product-intro__head-name",0)->innertext();
+$id = $info->find('.product-intro__head-sku',0)->innertext();
+$id = explode(" ", $id)[2];
 $pricing = $info->find("div[class='product-intro__head-price j-expose__product-intro__head-price']",0);
 
 $actual_price_and_discount = $pricing->find("span");
@@ -35,16 +37,29 @@ foreach($type_elems->find('label[class="sui-label-common sui-label__sellpoint"]'
 }
 
 $image = $html->find('img[class="j-verlok-lazy loaded"]',0)->attr["src"];
+
+//доп задание: получаем ссылку
+$link = "https://us.shein.com/pdsearch/".$id;
+$crawler = $client->request('GET', $link);
+
+$link  = $client->waitFor('a[class="S-product-item__img-container j-expose__product-item-img"]');
+$link =  str_get_html($link->html())->find('a[class="S-product-item__img-container j-expose__product-item-img"]',0)->attr['href'];
+$link = "https://us.shein.com/".$link;
 $product = array(
     "name" => $name,
+    "id" => $id,
     "actual_price" => $actual_price,
     "discount_percent" => $discount,
     "rating" => $rating,
-    "types" => $types,
-    "image" => $image
+    "categories" => $types,
+    "image" => $image,
+    "link" => $link
 );
 
 foreach($product as $key=>$value) {
     echo $key." :   ".(gettype($value)!="array"? $value : implode(", " , $value))."<br>";
 }
+
+$client->close();
+$client->quit();
 ?>
